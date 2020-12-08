@@ -1,4 +1,4 @@
-# test3app
+# SuMall
 
 ## Project setup
 ```
