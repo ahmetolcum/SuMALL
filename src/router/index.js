@@ -29,7 +29,17 @@ const routes = [
     path: "/profile",
     name: "profile",
     component: () => import('../components/User/profilepage.vue')
-  }
+  },
+  {
+    path: "/cart",
+    name:"cart",
+    component:()=> import('../components/User/cart.vue')
+  },
+  {
+    path: "/payment",
+    name:"payment",
+    component:()=> import('../components/User/payment.vue')
+  },
 ]
 
 const router = new VueRouter({

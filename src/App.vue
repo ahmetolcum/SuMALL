@@ -33,12 +33,13 @@
         <span class="title"> SuMall </span>
       </v-toolbar-title>
       <v-spacer />
-      <v-text-field
-        class="mx-auto"
+      <input type="text" v-model="search"
+        class="form-control"
         placeholder="Search..."
         single-line
         append-icon="mdi-magnify"
         color="secondary"
+        v-on:click="resultQuery(search)"
       />
       <v-spacer />
       <v-spacer></v-spacer>
@@ -57,7 +58,7 @@
         </v-btn>
       </v-toolbar-items>
     </v-app-bar>
-   <router-view> </router-view>
+     <router-view></router-view>
   </v-app>
 </template>
 
@@ -67,6 +68,8 @@ import productpage from "@/components/productpage";
 import login from "@/components/User/login";
 import signup from "@/components/User/signup";
 import profilepage from "@/components/User/profilepage";
+import mycart from "@/components/User/cart";
+
 
 export default {
   name: "App",
@@ -77,12 +80,13 @@ export default {
     login,
     signup,
     profilepage,
+    mycart
   },
-
   data: () => ({
     menuitems: [
       { icon: "mdi-login", title: "Log In", link: "login" },
       { icon: "mdi-pen", title: "Sign Up", link: "signup" },
+      { icon: "mdi-cart", title: "Cart", link: "cart" },
       { icon: "mdi-account", title: "My Account", link: "profile" },
     ],
     navlistitems: [
@@ -99,11 +103,26 @@ export default {
     menu2: false,
     menu3: false,
     theme: false,
+    loggedin:true,
   }),
   methods: {
     changepage(a) {
       //console.log('changepage')
       this.$router.push(a).catch(() => {});
+    },
+  },
+  computed: {
+    resultQuery() {
+      if (this.searchQuery) {
+        return this.resources.filter((item) => {
+          return this.searchQuery
+            .toLowerCase()
+            .split("")
+            .every((v) => item.title.toLowerCase().includes(v));
+        });
+      } else {
+        return this.resources;
+      }
     },
   },
 };

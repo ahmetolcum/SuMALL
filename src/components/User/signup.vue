@@ -9,6 +9,7 @@
               single-line
               append-icon="mdi-account"
               color="deep-purple lighten-2"
+            v-model="Name"
             />
             <div></div>
             <v-text-field
@@ -16,6 +17,7 @@
               single-line
               append-icon="mdi-account"
               color="deep-purple lighten-2"
+            v-model="Surname"
             />
             <div></div>
             <v-text-field
@@ -23,6 +25,7 @@
               single-line
               append-icon="mdi-email"
               color="deep-purple lighten-2"
+            v-model="Email"
             />
             <div></div>
             <v-text-field
@@ -30,16 +33,57 @@
               single-line
               append-icon="mdi-key"
               color="deep-purple lighten-2"
+            v-model="Password"
             />
           </v-list-item-content>
         </v-list-item>
       </v-list>
       <v-card-action>
         <v-spacer />
-        <v-btn flat right color="deep-purple lighten-1" text @click="menu3 = false" ><v-icon>mdi-pen</v-icon>
+        <v-btn flat right color="deep-purple lighten-1" text v-on:click="register(Name,Surname,Email,Password)"><v-icon>mdi-pen</v-icon>
           Sign Up!
         </v-btn>
       </v-card-action>
     </v-card>
   </v-content>
 </template>
+
+<script>
+import login from "./login";
+export default {
+methods:{
+  register(Name, Surname, Email, Password ){
+
+    const requestOption={
+      method:"POST",
+      headers: {"Content-Type" : "application/json"},
+      body: JSON.stringify({email: Email , name:Name, surname:Surname, password:Password})
+    };
+    fetch("http://localhost:5000/api/user/register", requestOption)
+    .then(async response=>{  const data = await response.json();
+
+      // check for error response
+      if (!response.ok) {
+        // get error message from body or default to response status
+        const error = (data && data.message) || response.status;
+        return Promise.reject(error);
+      }
+      })
+      .catch(error => {
+      this.errorMessage = error;
+      console.error('There was an error!', error);
+      })
+      .then(
+        response=> {var r = JSON.parse(context.getVariable('response'))
+        delete r.params
+        context.setVariable('response', JSON.stringify(r))
+        });
+    
+    //
+
+  },
+  
+}
+
+};
+</script>

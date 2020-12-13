@@ -1,27 +1,16 @@
 <template >
   <v-content>
-  <v-carousel v-model="model">
-    <v-carousel-item
-      v-for="(add) in adds"
-      :key="add.color"
-    >
-      <v-sheet
-        :color="add.color"
-        height="100%"
-        tile
-      >
-        <v-row
-          class="fill-height"
-          align="center"
-          justify="center"
-        >
-          <div class="display-3">
-            {{add.text}}
-          </div>
-        </v-row>
-      </v-sheet>
-    </v-carousel-item>
-  </v-carousel>
+    <v-carousel v-model="model">
+      <v-carousel-item v-for="add in adds" :key="add.color">
+        <v-sheet :color="add.color" height="100%" tile>
+          <v-row class="fill-height" align="center" justify="center">
+            <div class="display-3">
+              {{ add.text }}
+            </div>
+          </v-row>
+        </v-sheet>
+      </v-carousel-item>
+    </v-carousel>
     <v-container>
       <v-row class="mb-4">
         <v-col
@@ -29,15 +18,15 @@
           md="4"
           lg="3"
           xl="2"
-          v-for="(item, index) in 200"
+           v-for="(item, index) in 200"
           :key="index"
         >
           <v-hover>
             <template v-slot:default="{ hover }">
               <v-card
                 :class="`elevation-${hover ? 24 : 6}`"
-                class="mx-auto pa-6 transition-swing"
-                shaped
+                class="mx-auto pa-6  transition-swing"
+                rounded
                 color="grey lighten-4"
                 max-width="600"
               >
@@ -52,7 +41,7 @@
                       class="d-flex transition-fast-in-fast-out deep-purple darken-2 v-card--reveal display-3 white--text"
                       style="height: 100%"
                     >
-                      $14.99
+                     $14.99
                     </div>
                   </v-expand-transition>
                 </v-img>
@@ -62,7 +51,7 @@
                 <v-card-text class="font-weight-light"
                   ><div>product_name</div>
                   <div>product_description</div>
-                  <div>product_unit_price</div>
+                  <div>product_price</div>
                 </v-card-text>
 
                 <v-card-actions>
@@ -97,6 +86,7 @@ import productpage from "./productpage";
 import login from "./User/login";
 import signup from "./User/signup";
 import profilepage from "./User/profilepage";
+import mycart from "@/components/User/cart";
 
 export default {
   name: "App",  
@@ -106,7 +96,8 @@ export default {
     login,
     signup,
     profilepage,
-  },
+    mycart,
+},
   data: () => ({
       model: 0,
       adds: [
@@ -116,11 +107,6 @@ export default {
         {color:'red', text:"there"},
         {color:'orange', text:"soon!"},
       ],
-    menuitems: [
-      { icon: "mdi-login", title: "Log In" },
-      { icon: "mdi-pen", title: "Sign Up" },
-      { icon: "mdi-account", title: "My Account" },
-    ],
     navlistitems: [
       { icon: "mdi-trending-up", text: "Popular Products" },
       { icon: "mdi-sale", text: "Top Sales" },
@@ -138,9 +124,14 @@ export default {
   }),
   methods: {
     changepage(a) {
-      //console.log('changepage')
       this.$router.push(a).catch(() => {});
     },
+    search(b){
+      const requestOption={
+        method:"GET",
+      };
+      fetch("")
+    }
   },
   watch: {
     theme: function (next) {
