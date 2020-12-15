@@ -58,7 +58,9 @@
         </v-btn>
       </v-toolbar-items>
     </v-app-bar>
+     <v-parallax height="15500" src="@/assets/background9.jpg">
      <router-view></router-view>
+     </v-parallax>
   </v-app>
 </template>
 
@@ -83,6 +85,7 @@ export default {
     mycart
   },
   data: () => ({
+    products:[],
     menuitems: [
       { icon: "mdi-login", title: "Log In", link: "login" },
       { icon: "mdi-pen", title: "Sign Up", link: "signup" },
@@ -110,6 +113,34 @@ export default {
       //console.log('changepage')
       this.$router.push(a).catch(() => {});
     },
+    allproducts(){
+      const requestOption={
+        method:"GET",
+        headers: {"Content-Type" : "application/json"},
+      };
+      fetch("http://localhost:5000/api/product/main", requestOption)
+      .then(async response => {const data =await response.json();
+      // check for error response
+      //console.log(data[0])
+      var i;
+      for(i=0;i<13;i++){
+        this.products[i] = data[i]
+        //console.log(this.products[i])
+      }
+      //this.products = JSON.stringify(data)
+      
+      return this.products
+      if (!response.ok) {
+          // get error message from body or default to response status
+          const error = (data && data.message) || response.status;
+          return Promise.reject(error);
+      }
+      })
+      .catch(error => {
+        this.errorMessage = error;
+        console.error('There was an error!', error);
+      }) 
+   }
   },
   computed: {
     resultQuery() {
@@ -125,5 +156,8 @@ export default {
       }
     },
   },
+  created() {
+    this.allproducts()
+  }
 };
 </script>

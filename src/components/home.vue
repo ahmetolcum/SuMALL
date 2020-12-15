@@ -1,5 +1,5 @@
 <template >
-  <v-content>
+  <v-main>
     <v-carousel v-model="model">
       <v-carousel-item v-for="add in adds" :key="add.color">
         <v-sheet :color="add.color" height="100%" tile>
@@ -12,14 +12,13 @@
       </v-carousel-item>
     </v-carousel>
     <v-container>
-      <v-row class="mb-4">
+      <v-row class="mb-4" >
         <v-col
           sm="6"
           md="4"
           lg="3"
           xl="2"
-           v-for="(item, index) in 200"
-          :key="index"
+          v-for="product in products" v-bind:key="product"
         >
           <v-hover>
             <template v-slot:default="{ hover }">
@@ -29,29 +28,29 @@
                 rounded
                 color="grey lighten-4"
                 max-width="600"
+                min-height="550"
               >
                 <v-img
                   class="align-end"
                   height="200px"
-                  :src="`https://picsum.photos/500/300?image=${index + 1}`"
-                  :lazy-src="`https://picsum.photos/10/6?image=${index + 1}`"
+                  :src="product.image"
                   ><v-expand-transition>
                     <div
                       v-if="hover"
                       class="d-flex transition-fast-in-fast-out deep-purple darken-2 v-card--reveal display-3 white--text"
                       style="height: 100%"
                     >
-                     $14.99
+                     ₺{{product.unit_price}}
                     </div>
                   </v-expand-transition>
                 </v-img>
                 <h3 class="pt-6" style="position: relative">
-                  Product ID {{ item }}
+                {{product.name}}
                 </h3>
                 <v-card-text class="font-weight-light"
-                  ><div>product_name</div>
-                  <div>product_description</div>
-                  <div>product_price</div>
+                  ><div>{{product.product_id}}</div>
+                  <div>{{product.description}}</div>
+                  <div>₺{{product.unit_price}}</div>
                 </v-card-text>
 
                 <v-card-actions>
@@ -68,7 +67,7 @@
                     <v-icon large>mdi-dots-horizontal</v-icon>
                   </v-btn>
                   <v-spacer />
-                  <v-btn flat color="secondary" text absolute fab right
+                  <v-btn flat color="secondary" text absolute fab right 
                     ><v-icon large>mdi-cart</v-icon></v-btn
                   >
                 </v-card-actions>
@@ -78,7 +77,7 @@
         </v-col>
       </v-row>
     </v-container>
-  </v-content>
+  </v-main>
 </template>
 
 <script>
@@ -99,14 +98,15 @@ export default {
     mycart,
 },
   data: () => ({
-      model: 0,
-      adds: [
+    products:[],
+    model: 0,
+    adds: [
         {color:'primary', text:"Promotions"},
         {color:'secondary', text:"will"},
         {color:'yellow darken-2', text:"be"},
         {color:'red', text:"there"},
         {color:'orange', text:"soon!"},
-      ],
+    ],
     navlistitems: [
       { icon: "mdi-trending-up", text: "Popular Products" },
       { icon: "mdi-sale", text: "Top Sales" },
@@ -121,23 +121,81 @@ export default {
     menu2: false,
     menu3: false,
     theme: false,
+
   }),
   methods: {
     changepage(a) {
       this.$router.push(a).catch(() => {});
     },
-    search(b){
-      const requestOption={
-        method:"GET",
-      };
-      fetch("")
-    }
+    allproducts(){
+ 
+   }
   },
   watch: {
     theme: function (next) {
       this.$vuetify.theme.dark = next;
     },
   },
+  created() {
+      console.log("this is created")
+      const requestOption={
+      method:"GET",
+      headers: {"Content-Type" : "application/json"},
+      };
+      fetch("http://localhost:5000/api/product/main", requestOption)
+      .then(async response => {const data =await response.json();
+      // check for error response
+      //console.log(data[0])
+      var i;
+      for(i=0;i<13;i++){
+        this.products[i] = data[i]
+        //console.log(this.products[i])
+      }
+      //this.products = JSON.stringify(data)
+      if (!response.ok) {
+          // get error message from body or default to response status
+          const error = (data && data.message) || response.status;
+          return Promise.reject(error);
+      }
+      })
+      .catch(error => {
+        this.errorMessage = error;
+        console.error('There was an error!', error);
+      }) 
+  },
+  beforeCreate() {
+      console.log("this is beforeCreate")
+        const requestOption={
+        method:"GET",
+        headers: {"Content-Type" : "application/json"},
+      };
+      fetch("http://localhost:5000/api/product/main", requestOption)
+      .then(async response => {const data =await response.json();
+      // check for error response
+      //console.log(data[0])
+      var i;
+      for(i=0;i<13;i++){
+        this.products[i] = data[i]
+        //console.log(this.products[i])
+      }
+      //this.products = JSON.stringify(data)
+      if (!response.ok) {
+          // get error message from body or default to response status
+          const error = (data && data.message) || response.status;
+          return Promise.reject(error);
+      }
+      })
+      .catch(error => {
+        this.errorMessage = error;
+        console.error('There was an error!', error);
+      }) 
+  },
+  computed: {
+    propertycomputed(){
+      console.log("this is computed")
+      return this.products
+    }
+  }
 };
 </script>
 <style>

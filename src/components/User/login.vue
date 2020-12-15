@@ -38,7 +38,7 @@ export default {
     login(Email, Password){
       const requestOption={
         method:"POST",
-        headers: {"Content-Type" : "application/json"},
+        headers: {"Content-Type" : "application/json" , "x-auth-token" : tokenid},
         body: JSON.stringify({email: Email, password:Password})
       };
       fetch("http://localhost:5000/api/user/login", requestOption)
