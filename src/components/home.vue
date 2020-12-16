@@ -13,19 +13,19 @@
     </v-carousel>
     <v-container>
       <v-row class="mb-4" >
+      <div  v-if="isProduct"/> 
         <v-col
           sm="6"
           md="4"
           lg="3"
           xl="2"
-          v-for="product in products" v-bind:key="product"
-        >
+          v-for="product in products" :key="product">    
           <v-hover>
             <template v-slot:default="{ hover }">
               <v-card
                 :class="`elevation-${hover ? 24 : 6}`"
                 class="mx-auto pa-6  transition-swing"
-                rounded
+                rounded 
                 color="grey lighten-4"
                 max-width="600"
                 min-height="550"
@@ -52,22 +52,19 @@
                   <div>{{product.description}}</div>
                   <div>₺{{product.unit_price}}</div>
                 </v-card-text>
-
                 <v-card-actions>
+                  <router-link v-bind:to="'/product/' + product.product_id">
                   <v-btn
-                    flat
                     color="primary"
                     text
-                    v-on:click="changepage('product')"
-                    link
-                    left
+                    bottom
                     absolute
-                    fab
                   >
                     <v-icon large>mdi-dots-horizontal</v-icon>
                   </v-btn>
+                  </router-link>
                   <v-spacer />
-                  <v-btn flat color="secondary" text absolute fab right 
+                  <v-btn flat color="secondary" text bottom absolute right
                     ><v-icon large>mdi-cart</v-icon></v-btn
                   >
                 </v-card-actions>
@@ -86,10 +83,11 @@ import login from "./User/login";
 import signup from "./User/signup";
 import profilepage from "./User/profilepage";
 import mycart from "@/components/User/cart";
+import store from "@/store/index.js";
 
 export default {
-  name: "App",  
-
+  name: 'home',  
+  props: ['product'],
   components: {
     productpage,
     login,
@@ -98,23 +96,18 @@ export default {
     mycart,
 },
   data: () => ({
-    products:[],
+    isProduct:false,
+    products: [],
     model: 0,
+    return: {
+    product: 0,
+    },
     adds: [
         {color:'primary', text:"Promotions"},
         {color:'secondary', text:"will"},
         {color:'yellow darken-2', text:"be"},
         {color:'red', text:"there"},
         {color:'orange', text:"soon!"},
-    ],
-    navlistitems: [
-      { icon: "mdi-trending-up", text: "Popular Products" },
-      { icon: "mdi-sale", text: "Top Sales" },
-      { icon: "mdi-heart", text: "My Favorites" },
-      { icon: "mdi-laptop-chromebook", text: "Technology" },
-      { icon: "mdi-hanger", text: "Clothing" },
-      { icon: "mdi-flower", text: "Decoration" },
-      { icon: "mdi-history", text: "History" },
     ],
     drawer: false,
     menu: false,
@@ -123,21 +116,21 @@ export default {
     theme: false,
 
   }),
+  mounted(){
+    this.allproducts()
+  },
+  computed: {
+
+  },
   methods: {
     changepage(a) {
       this.$router.push(a).catch(() => {});
     },
-    allproducts(){
- 
-   }
-  },
-  watch: {
-    theme: function (next) {
-      this.$vuetify.theme.dark = next;
+    forcererender(){
+      this.product+=1;
     },
-  },
-  created() {
-      console.log("this is created")
+    allproducts(){
+      //console.log("this is created")
       const requestOption={
       method:"GET",
       headers: {"Content-Type" : "application/json"},
@@ -147,11 +140,11 @@ export default {
       // check for error response
       //console.log(data[0])
       var i;
-      for(i=0;i<13;i++){
+      for(i=0;i< data.length ;i++){
         this.products[i] = data[i]
         //console.log(this.products[i])
       }
-      //this.products = JSON.stringify(data)
+      this.isProduct = true;
       if (!response.ok) {
           // get error message from body or default to response status
           const error = (data && data.message) || response.status;
@@ -162,40 +155,23 @@ export default {
         this.errorMessage = error;
         console.error('There was an error!', error);
       }) 
-  },
-  beforeCreate() {
-      console.log("this is beforeCreate")
-        const requestOption={
-        method:"GET",
-        headers: {"Content-Type" : "application/json"},
-      };
-      fetch("http://localhost:5000/api/product/main", requestOption)
-      .then(async response => {const data =await response.json();
-      // check for error response
-      //console.log(data[0])
-      var i;
-      for(i=0;i<13;i++){
-        this.products[i] = data[i]
-        //console.log(this.products[i])
+   },
+/*   getproductpage(product){
+      this.$router.push({
+        name: 'productpage',
+        params: {
+          name : this.product,
+        }
       }
-      //this.products = JSON.stringify(data)
-      if (!response.ok) {
-          // get error message from body or default to response status
-          const error = (data && data.message) || response.status;
-          return Promise.reject(error);
-      }
-      })
-      .catch(error => {
-        this.errorMessage = error;
-        console.error('There was an error!', error);
-      }) 
+      )
+
+   }*/
   },
-  computed: {
-    propertycomputed(){
-      console.log("this is computed")
-      return this.products
-    }
-  }
+  watch: {
+    theme: function (next) {
+      this.$vuetify.theme.dark = next;
+    },
+  },
 };
 </script>
 <style>

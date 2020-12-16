@@ -33,13 +33,13 @@
         <span class="title"> SuMall </span>
       </v-toolbar-title>
       <v-spacer />
-      <input type="text" v-model="search"
+      <input type="text"
         class="form-control"
         placeholder="Search..."
         single-line
         append-icon="mdi-magnify"
         color="secondary"
-        v-on:click="resultQuery(search)"
+        
       />
       <v-spacer />
       <v-spacer></v-spacer>
@@ -85,7 +85,6 @@ export default {
     mycart
   },
   data: () => ({
-    products:[],
     menuitems: [
       { icon: "mdi-login", title: "Log In", link: "login" },
       { icon: "mdi-pen", title: "Sign Up", link: "signup" },
@@ -113,51 +112,9 @@ export default {
       //console.log('changepage')
       this.$router.push(a).catch(() => {});
     },
-    allproducts(){
-      const requestOption={
-        method:"GET",
-        headers: {"Content-Type" : "application/json"},
-      };
-      fetch("http://localhost:5000/api/product/main", requestOption)
-      .then(async response => {const data =await response.json();
-      // check for error response
-      //console.log(data[0])
-      var i;
-      for(i=0;i<13;i++){
-        this.products[i] = data[i]
-        //console.log(this.products[i])
-      }
-      //this.products = JSON.stringify(data)
-      
-      return this.products
-      if (!response.ok) {
-          // get error message from body or default to response status
-          const error = (data && data.message) || response.status;
-          return Promise.reject(error);
-      }
-      })
-      .catch(error => {
-        this.errorMessage = error;
-        console.error('There was an error!', error);
-      }) 
-   }
   },
   computed: {
-    resultQuery() {
-      if (this.searchQuery) {
-        return this.resources.filter((item) => {
-          return this.searchQuery
-            .toLowerCase()
-            .split("")
-            .every((v) => item.title.toLowerCase().includes(v));
-        });
-      } else {
-        return this.resources;
-      }
-    },
+    
   },
-  created() {
-    this.allproducts()
-  }
 };
 </script>

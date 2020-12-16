@@ -34,6 +34,7 @@
               append-icon="mdi-key"
               color="deep-purple lighten-2"
             v-model="Password"
+
             />
           </v-list-item-content>
         </v-list-item>
@@ -43,6 +44,13 @@
         <v-btn flat right color="deep-purple lighten-1" text v-on:click="register(Name,Surname,Email,Password)"><v-icon>mdi-pen</v-icon>
           Sign Up!
         </v-btn>
+        <div class="success" v-if="isSuccessful">
+          {{ text.message }}
+          Please go to your mail to confirm!
+        </div>
+        <div class="error" v-if="!isSuccessful" position-x="center">
+          {{ text.message }}
+        </div>
       </v-card-action>
     </v-card>
   </v-content>
@@ -51,6 +59,11 @@
 <script>
 import login from "./login";
 export default {
+data: ()=> ({
+  isSuccessful: false,
+  text: {message: ""},
+  
+}),
 methods:{
   register(Name, Surname, Email, Password ){
 
@@ -66,7 +79,16 @@ methods:{
       if (!response.ok) {
         // get error message from body or default to response status
         const error = (data && data.message) || response.status;
-        return Promise.reject(error);
+        //console.log(response);
+        console.log(data);
+        
+        this.text.message = data.errors[0].msg;
+        
+        return Promise.reject(error);     
+      }
+      else{
+        this.isSuccessful=true;
+        this.text.message = "User Successfully Signed Up!";
       }
       })
       .catch(error => {

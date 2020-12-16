@@ -27,6 +27,9 @@
         </v-list>
         <v-spacer />
         <v-btn color="primary" text right v-on:click="login(Email, Password)"><v-icon>mdi-login</v-icon> Log In! </v-btn>
+        <div class="fail" v-if="!isSuccessful">
+          {{ text.message }}
+        </div>
       </v-card>
     </v-col>
   </v-content>
@@ -34,22 +37,33 @@
 
 <script>
 export default {
+  data:()=>({
+    isSuccessful: false,
+    text: {message: ""},
+  }),
   methods:{
+
     login(Email, Password){
       const requestOption={
         method:"POST",
-        headers: {"Content-Type" : "application/json" , "x-auth-token" : tokenid},
+        headers: {"Content-Type" : "application/json" },
         body: JSON.stringify({email: Email, password:Password})
       };
       fetch("http://localhost:5000/api/user/login", requestOption)
       .then(async response=>{  const data = await response.json();
-
         // check for error response
         if (!response.ok) {
           // get error message from body or default to response status
           const error = (data && data.message) || response.status;
+          this.text.message = data.errors[0].msg;
           return Promise.reject(error);
         }
+        
+      else{
+        this.isSuccessful=true;
+        // this.text.message = "User Successfully Signed Up!";
+        this.$router.push('/').catch(() => {});
+      }
         })
         .catch(error => {
         this.errorMessage = error;
